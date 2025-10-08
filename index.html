@@ -69,6 +69,14 @@
 				color: white;
 			}
 
+			.nav-btn.refresh-btn {
+				font-size: 32px;
+				padding: 0;
+				background: none;
+				border: none;
+				box-shadow: none;
+			}
+
 			.page {
 				display: none;
 			}
@@ -260,6 +268,10 @@
 				border-color: #667eea;
 			}
 
+			.form-buttons {
+				margin-top: 20px;
+			}
+
 			.checkbox-group {
 				display: flex;
 				align-items: center;
@@ -436,7 +448,8 @@
 
 			<div class="nav">
 				<button class="nav-btn active" onclick="showPage('home')">בית</button>
-				<button class="nav-btn" onclick="showPage('report')">דוח היסטוריה</button>
+				<button class="nav-btn" onclick="showPage('report')">היסטוריה</button>
+				<button class="nav-btn refresh-btn" onclick="location.reload()">🔄</button>
 			</div>
 
 			<div id="homePage" class="page active">
@@ -464,7 +477,7 @@
 						<label>כולל מעקב מחיר</label>
 					</div>
 				</div>
-				<div>
+				<div class="form-buttons">
 					<button class="btn btn-primary" onclick="createActivity()">צור</button>
 					<button class="btn btn-secondary" onclick="closeModal('createActivityModal')">ביטול</button>
 				</div>
@@ -480,7 +493,7 @@
 					<input type="number" id="activityPrice" placeholder="0.00" step="0.01" />
 				</div>
 				<div class="previous-logs" id="previousLogs"></div>
-				<div>
+				<div class="form-buttons">
 					<button class="btn btn-primary" onclick="logActivity()">שמור</button>
 					<button class="btn btn-secondary" onclick="closeModal('logActivityModal')">ביטול</button>
 				</div>
@@ -492,7 +505,7 @@
 			<div class="modal-content">
 				<div class="modal-header">למחוק פעילות?</div>
 				<p style="margin-bottom: 20px; color: #666">האם אתה בטוח שברצונך למחוק את הפעילות הזו? כל הרישומים יימחקו גם כן. פעולה זו לא ניתנת לביטול.</p>
-				<div>
+				<div class="form-buttons">
 					<button class="btn btn-primary" style="background: #e63946" onclick="confirmDelete()">מחק</button>
 					<button class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">ביטול</button>
 				</div>
@@ -511,7 +524,7 @@
 					<label>בחר צבע</label>
 					<div class="color-picker" id="colorPicker"></div>
 				</div>
-				<div>
+				<div class="form-buttons">
 					<button class="btn btn-primary" onclick="saveActivityEdit()">שמור</button>
 					<button class="btn btn-secondary" onclick="closeModal('editActivityModal')">ביטול</button>
 				</div>
@@ -722,6 +735,11 @@
 				const priceGroup = document.getElementById('priceGroup');
 				priceGroup.style.display = activity.hasPrice ? 'block' : 'none';
 
+				if (activity.hasPrice) {
+					const priceInput = document.getElementById('activityPrice');
+					priceInput.style.borderColor = '#e0e0e0';
+				}
+
 				// Show previous logs
 				const logs = data.logs.filter(l => l.activityId === activity.id);
 				const previousLogsDiv = document.getElementById('previousLogs');
@@ -735,6 +753,18 @@
 							logItem.className = 'log-item';
 							logItem.textContent = `${formatDate(log.timestamp)}${log.price ? ` - ₪${log.price.toFixed(0)}` : ''}`;
 							previousLogsDiv.appendChild(logItem);
+							//add delete log button to the side
+							const deleteLogButton = document.createElement('button');
+							deleteLogButton.textContent = '❌';
+							deleteLogButton.style.float = 'left';
+							deleteLogButton.style.border = 'none';
+							deleteLogButton.style.cursor = 'pointer';
+							//position it to the left side
+							deleteLogButton.onclick = e => {
+								e.stopPropagation();
+								deleteLog(log.id);
+							};
+							logItem.appendChild(deleteLogButton);
 						});
 				} else {
 					previousLogsDiv.innerHTML = '<div class="previous-logs-title">אין רישומים קודמים</div>';
@@ -743,10 +773,26 @@
 				document.getElementById('logActivityModal').classList.add('active');
 			}
 
+			function deleteLog(logId) {
+				data.logs = data.logs.filter(l => l.id !== logId);
+				saveData();
+				if (currentActivity) {
+					openLogActivityModal(currentActivity); // Refresh the modal
+				}
+				renderActivities(); // Refresh the activities to update totals
+			}
+
 			function logActivity() {
 				if (!currentActivity) return;
 
 				const price = currentActivity.hasPrice ? parseFloat(document.getElementById('activityPrice').value) || 0 : null;
+				const priceInput = document.getElementById('activityPrice');
+				if (currentActivity.hasPrice && price <= 0) {
+					priceInput.style.borderColor = 'red';
+					return;
+				} else {
+					priceInput.style.borderColor = '#e0e0e0';
+				}
 
 				const log = {
 					id: Date.now(),
