@@ -490,7 +490,7 @@
 				<div class="modal-header" id="logActivityTitle"></div>
 				<div class="form-group" id="priceGroup" style="display: none">
 					<label>מחיר (₪)</label>
-					<input type="number" id="activityPrice" placeholder="0.00" step="0.01" />
+					<input type="number" id="activityPrice" placeholder="0.00" step="1" />
 				</div>
 				<div class="previous-logs" id="previousLogs"></div>
 				<div class="form-buttons">
@@ -696,11 +696,11 @@
 					}
 
 					card.innerHTML = `
-                    <button class="edit-btn" onclick="event.stopPropagation(); editActivity(${activity.id})">✒️</button>
-                    <button class="delete-btn" onclick="event.stopPropagation(); deleteActivity(${activity.id})">×</button>
-                    <div class="activity-name">${activity.name}</div>
-                    ${infoHTML}
-                `;
+			                 <button class="edit-btn" onclick="event.stopPropagation(); editActivity(${activity.id})">✒️</button>
+			                 <button class="delete-btn" onclick="event.stopPropagation(); deleteActivity(${activity.id})">×</button>
+			                 <div class="activity-name">${activity.name}</div>
+			                 ${infoHTML}
+			             `;
 
 					// Drag and drop event listeners
 					card.addEventListener('dragstart', handleDragStart);
@@ -748,11 +748,17 @@
 					previousLogsDiv.innerHTML = '<div class="previous-logs-title">רישומים קודמים:</div>';
 					logs.slice(-5)
 						.reverse()
-						.forEach(log => {
+						.forEach((log, i) => {
 							const logItem = document.createElement('div');
 							logItem.className = 'log-item';
 							logItem.textContent = `${formatDate(log.timestamp)}${log.price ? ` - ₪${log.price.toFixed(0)}` : ''}`;
 							previousLogsDiv.appendChild(logItem);
+
+							//set the last log's price in the text field
+							if (log.price > 0 && i === 0) {
+								document.getElementById('activityPrice').value = log.price ? log.price.toFixed(0) : '';
+							}
+
 							//add delete log button to the side
 							const deleteLogButton = document.createElement('button');
 							deleteLogButton.textContent = '❌';
@@ -999,9 +1005,9 @@
 						const item = document.createElement('div');
 						item.className = 'history-item';
 						item.innerHTML = `
-                        <span class="history-date">${formatDate(log.timestamp)}</span>
-                        ${log.price ? `<span class="history-price">₪${log.price.toFixed(0)}</span>` : ''}
-                    `;
+			                    <span class="history-date">${formatDate(log.timestamp)}</span>
+			                     ${log.price ? `<span class="history-price">₪${log.price.toFixed(0)}</span>` : ''}
+			                 `;
 						section.appendChild(item);
 					});
 
