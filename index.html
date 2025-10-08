@@ -676,7 +676,7 @@
 
 					let infoHTML = '';
 					if (activity.hasPrice) {
-						infoHTML += `<div class="activity-info">סה"כ: ${totalSpent.toFixed(2)}</div>`;
+						infoHTML += `<div class="activity-info">סה"כ: ₪${totalSpent.toFixed(0)}</div>`;
 					}
 					if (lastLog) {
 						infoHTML += `<div class="last-activity">אחרון: ${formatDate(lastLog.timestamp)}</div>`;
@@ -733,7 +733,7 @@
 						.forEach(log => {
 							const logItem = document.createElement('div');
 							logItem.className = 'log-item';
-							logItem.textContent = `${formatDate(log.timestamp)}${log.price ? ` - ₪${log.price.toFixed(2)}` : ''}`;
+							logItem.textContent = `${formatDate(log.timestamp)}${log.price ? ` - ₪${log.price.toFixed(0)}` : ''}`;
 							previousLogsDiv.appendChild(logItem);
 						});
 				} else {
@@ -943,7 +943,7 @@
 
 					let titleHTML = `<div class="activity-section-title">${activity.name}`;
 					if (activity.hasPrice) {
-						titleHTML += ` - סה"כ: ₪${activityTotal.toFixed(2)}`;
+						titleHTML += ` - סה"כ: ₪${activityTotal.toFixed(0)}`;
 					}
 					titleHTML += `</div>`;
 
@@ -954,7 +954,7 @@
 						item.className = 'history-item';
 						item.innerHTML = `
                         <span class="history-date">${formatDate(log.timestamp)}</span>
-                        ${log.price ? `<span class="history-price">₪${log.price.toFixed(2)}</span>` : ''}
+                        ${log.price ? `<span class="history-price">₪${log.price.toFixed(0)}</span>` : ''}
                     `;
 						section.appendChild(item);
 					});
@@ -965,7 +965,7 @@
 				if (grandTotal > 0) {
 					const totalSection = document.createElement('div');
 					totalSection.className = 'total-section';
-					totalSection.textContent = `סה"כ הוצאות: ₪${grandTotal.toFixed(2)}`;
+					totalSection.textContent = `סה"כ הוצאות: ₪${grandTotal.toFixed(0)}`;
 					historyList.appendChild(totalSection);
 				}
 
