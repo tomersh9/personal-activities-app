@@ -89,7 +89,7 @@ body {
 	cursor: pointer;
 	transition: all 0.1s;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	min-height: 200px;
+	min-height: 250px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -347,6 +347,7 @@ body {
 	background: #667eea;
 	color: white;
 	padding: 20px;
+	margin-bottom: 20px;
 	border-radius: 15px;
 	text-align: center;
 	font-size: 1.3em;
@@ -399,6 +400,32 @@ body {
 	box-shadow: 0 0 0 2px white, 0 0 0 4px #667eea;
 }
 
+.weekly-avg-spent {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	background: rgba(255, 255, 255, 0.9);
+	color: #4caf50;
+	font-size: 0.8em;
+	font-weight: bold;
+	padding: 4px 8px;
+	border-radius: 12px;
+	z-index: 5;
+}
+
+.weekly-avg-logs {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	background: rgba(255, 255, 255, 0.9);
+	color: #667eea;
+	font-size: 0.8em;
+	font-weight: bold;
+	padding: 4px 8px;
+	border-radius: 12px;
+	z-index: 5;
+}
+
 @media (max-width: 768px) {
 	.header h1 {
 		font-size: 1.8em;
@@ -410,7 +437,7 @@ body {
 	}
 
 	.activity-card {
-		min-height: 150px;
+		min-height: 200px;
 		padding: 20px 15px;
 	}
 

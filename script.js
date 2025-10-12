@@ -147,6 +147,9 @@ function renderActivities() {
 		const lastLog = logs.length > 0 ? logs[logs.length - 1] : null;
 		const totalSpent = logs.reduce((sum, log) => sum + (log.price || 0), 0);
 
+		// Calculate weekly averages
+		const weeklyStats = calculateWeeklyAverages(activity.id);
+
 		const card = document.createElement('div');
 		card.className = 'activity-card';
 		card.style.background = activity.color;
@@ -161,12 +164,22 @@ function renderActivities() {
 			infoHTML += `<div class="last-activity">${formatDate(lastLog.timestamp)}</div>`;
 		}
 
+		// Add weekly averages
+		let weeklyStatsHTML = '';
+		if (activity.hasPrice && weeklyStats.avgSpentPerWeek > 0) {
+			weeklyStatsHTML += `<div class="weekly-avg-spent">₪${weeklyStats.avgSpentPerWeek.toFixed(0)}/ש</div>`;
+		}
+		if (weeklyStats.avgLogsPerWeek > 0) {
+			weeklyStatsHTML += `<div class="weekly-avg-logs">${weeklyStats.avgLogsPerWeek.toFixed(1)}/ש</div>`;
+		}
+
 		card.innerHTML = `
-			                 <button class="edit-btn" onclick="event.stopPropagation(); editActivity(${activity.id})">✒️</button>
-			                 <button class="delete-btn" onclick="event.stopPropagation(); deleteActivity(${activity.id})">×</button>
-			                 <div class="activity-name">${activity.name}</div>
-			                 ${infoHTML}
-			             `;
+                             <button class="edit-btn" onclick="event.stopPropagation(); editActivity(${activity.id})">✒️</button>
+                             <button class="delete-btn" onclick="event.stopPropagation(); deleteActivity(${activity.id})">×</button>
+                             ${weeklyStatsHTML}
+                             <div class="activity-name">${activity.name}</div>
+                             ${infoHTML}
+                         `;
 
 		// Drag and drop event listeners
 		card.addEventListener('dragstart', handleDragStart);
@@ -191,6 +204,33 @@ function renderActivities() {
 
 		grid.appendChild(card);
 	});
+}
+
+function calculateWeeklyAverages(activityId) {
+	const logs = data.logs.filter(l => l.activityId === activityId);
+
+	if (logs.length === 0) {
+		return { avgLogsPerWeek: 0, avgSpentPerWeek: 0 };
+	}
+
+	// Sort logs by date
+	const sortedLogs = logs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+	const firstLogDate = new Date(sortedLogs[0].timestamp);
+	const lastLogDate = new Date(sortedLogs[sortedLogs.length - 1].timestamp);
+
+	// Calculate the number of weeks between first and last log
+	const timeDiffMs = lastLogDate - firstLogDate;
+	const daysDiff = timeDiffMs / (1000 * 60 * 60 * 24);
+	const weeksDiff = Math.max(daysDiff / 7, 1); // At least 1 week to avoid division by zero
+
+	const totalSpent = logs.reduce((sum, log) => sum + (log.price || 0), 0);
+	const totalLogs = logs.length;
+
+	return {
+		avgLogsPerWeek: totalLogs / weeksDiff,
+		avgSpentPerWeek: totalSpent / weeksDiff,
+	};
 }
 
 function openLogActivityModal(activity) {
@@ -447,6 +487,9 @@ function renderReport() {
 	const historyList = document.getElementById('historyList');
 	historyList.innerHTML = '';
 
+	const totalSection = document.createElement('div');
+	historyList.appendChild(totalSection);
+
 	let grandTotal = 0;
 
 	data.activities.forEach(activity => {
@@ -481,10 +524,8 @@ function renderReport() {
 	});
 
 	if (grandTotal > 0) {
-		const totalSection = document.createElement('div');
 		totalSection.className = 'total-section';
 		totalSection.textContent = `סה"כ הוצאות: ₪${grandTotal.toFixed(0)}`;
-		historyList.appendChild(totalSection);
 	}
 
 	if (data.logs.length === 0) {
