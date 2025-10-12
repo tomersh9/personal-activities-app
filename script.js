@@ -158,7 +158,7 @@ function renderActivities() {
 
 		let infoHTML = '';
 		if (activity.hasPrice) {
-			infoHTML += `<div class="activity-info">סה"כ: ₪${totalSpent.toFixed(0)}</div>`;
+			infoHTML += `<div class="activity-info">סה"כ: ₪${formatPrice(totalSpent)}</div>`;
 		}
 		if (lastLog) {
 			infoHTML += `<div class="last-activity">${formatDate(lastLog.timestamp)}</div>`;
@@ -167,7 +167,7 @@ function renderActivities() {
 		// Add weekly averages
 		let weeklyStatsHTML = '';
 		if (activity.hasPrice && weeklyStats.avgSpentPerWeek > 0) {
-			weeklyStatsHTML += `<div class="weekly-avg-spent">₪${weeklyStats.avgSpentPerWeek.toFixed(0)}/ש</div>`;
+			weeklyStatsHTML += `<div class="weekly-avg-spent">₪${formatPrice(weeklyStats.avgSpentPerWeek)}/ש</div>`;
 		}
 		if (weeklyStats.avgLogsPerWeek > 0) {
 			weeklyStatsHTML += `<div class="weekly-avg-logs">${weeklyStats.avgLogsPerWeek.toFixed(1)}/ש</div>`;
@@ -181,7 +181,12 @@ function renderActivities() {
                              ${infoHTML}
                          `;
 
-		// Drag and drop event listeners
+		card.removeEventListener('dragstart', handleDragStart);
+		card.removeEventListener('dragend', handleDragEnd);
+		card.removeEventListener('dragover', handleDragOver);
+		card.removeEventListener('drop', handleDrop);
+		card.removeEventListener('dragleave', handleDragLeave);
+
 		card.addEventListener('dragstart', handleDragStart);
 		card.addEventListener('dragend', handleDragEnd);
 		card.addEventListener('dragover', handleDragOver);
@@ -257,7 +262,7 @@ function openLogActivityModal(activity) {
 			.forEach((log, i) => {
 				const logItem = document.createElement('div');
 				logItem.className = 'log-item';
-				logItem.textContent = `${formatDate(log.timestamp)}${log.price ? ` - ₪${log.price.toFixed(0)}` : ''}`;
+				logItem.textContent = `${formatDate(log.timestamp)}${log.price ? ` - ₪${formatPrice(log.price)}` : ''}`;
 				previousLogsDiv.appendChild(logItem);
 
 				//set the last log's price in the text field
@@ -483,6 +488,10 @@ function formatDate(timestamp) {
 	return `${day}/${month}/${year}`;
 }
 
+function formatPrice(price) {
+	return new Intl.NumberFormat('he-IL').format(Math.round(price));
+}
+
 function renderReport() {
 	const historyList = document.getElementById('historyList');
 	historyList.innerHTML = '';
@@ -492,7 +501,9 @@ function renderReport() {
 
 	let grandTotal = 0;
 
-	data.activities.forEach(activity => {
+	const orderedActivities = [...data.activities.filter(activity => activity.hasPrice), ...data.activities.filter(activity => !activity.hasPrice)];
+
+	orderedActivities.forEach(activity => {
 		const logs = data.logs.filter(l => l.activityId === activity.id);
 		if (logs.length === 0) return;
 
@@ -504,19 +515,20 @@ function renderReport() {
 
 		let titleHTML = `<div class="activity-section-title">${activity.name}`;
 		if (activity.hasPrice) {
-			titleHTML += ` - סה"כ: ₪${activityTotal.toFixed(0)}`;
+			titleHTML += ` - סה"כ: ₪${formatPrice(activityTotal)}`;
 		}
 		titleHTML += `</div>`;
 
 		section.innerHTML = titleHTML;
 
-		logs.forEach(log => {
+		//order logs by new first
+		logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(log => {
 			const item = document.createElement('div');
 			item.className = 'history-item';
 			item.innerHTML = `
-			                    <span class="history-date">${formatDate(log.timestamp)}</span>
-			                     ${log.price ? `<span class="history-price">₪${log.price.toFixed(0)}</span>` : ''}
-			                 `;
+                                <span class="history-date">${formatDate(log.timestamp)}</span>
+                                 ${log.price ? `<span class="history-price">₪${formatPrice(log.price)}</span>` : ''}
+                             `;
 			section.appendChild(item);
 		});
 
@@ -525,7 +537,7 @@ function renderReport() {
 
 	if (grandTotal > 0) {
 		totalSection.className = 'total-section';
-		totalSection.textContent = `סה"כ הוצאות: ₪${grandTotal.toFixed(0)}`;
+		totalSection.textContent = `סה"כ הוצאות: ₪${formatPrice(grandTotal)}`;
 	}
 
 	if (data.logs.length === 0) {
