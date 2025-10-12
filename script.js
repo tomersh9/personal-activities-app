@@ -503,6 +503,15 @@ function renderReport() {
 
 	const orderedActivities = [...data.activities.filter(activity => activity.hasPrice), ...data.activities.filter(activity => !activity.hasPrice)];
 
+	//order activities by most recent log
+	orderedActivities.sort((a, b) => {
+		const aLogs = data.logs.filter(l => l.activityId === a.id);
+		const bLogs = data.logs.filter(l => l.activityId === b.id);
+		const aLastLog = aLogs.length > 0 ? new Date(aLogs[aLogs.length - 1].timestamp) : 0;
+		const bLastLog = bLogs.length > 0 ? new Date(bLogs[bLogs.length - 1].timestamp) : 0;
+		return bLastLog - aLastLog;
+	});
+
 	orderedActivities.forEach(activity => {
 		const logs = data.logs.filter(l => l.activityId === activity.id);
 		if (logs.length === 0) return;
