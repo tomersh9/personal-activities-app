@@ -363,27 +363,32 @@ function openLogActivityModal(activity) {
 function confirmDeleteLog(log) {
 	logToDelete = log;
 
-	// Show confirmation in the same modal
-	const previousLogsDiv = document.getElementById('previousLogs');
-	const originalContent = previousLogsDiv.innerHTML;
+	// Populate the delete log modal
+	document.getElementById('deleteLogDate').textContent = formatDate(log.timestamp);
+	const priceElement = document.getElementById('deleteLogPrice');
+	if (log.price) {
+		priceElement.textContent = `₪${formatPrice(log.price)}`;
+		priceElement.style.display = 'inline';
+	} else {
+		priceElement.style.display = 'none';
+	}
 
-	previousLogsDiv.innerHTML = `
-        <div class="delete-log-confirmation">
-            <div class="delete-log-icon">🗑️</div>
-            <div class="delete-log-title">למחוק רישום?</div>
-            <div class="delete-log-details">
-                <div class="log-details-card">
-                    <span class="log-date">${formatDate(log.timestamp)}</span>
-                    ${log.price ? `<span class="log-price">₪${formatPrice(log.price)}</span>` : ''}
-                </div>
-            </div>
-            <div class="delete-log-message">פעולה זו לא ניתנת לביטול</div>
-            <div class="delete-log-buttons">
-                <button class="btn btn-danger" onclick="executeDeleteLog()">מחק רישום</button>
-                <button class="btn btn-secondary" onclick="cancelDeleteLog('${encodeURIComponent(originalContent)}')">ביטול</button>
-            </div>
-        </div>
-    `;
+	// Show the delete log modal
+	document.getElementById('deleteLogModal').classList.add('active');
+}
+
+function executeDeleteLog() {
+	if (!logToDelete) return;
+
+	data.logs = data.logs.filter(l => l.id !== logToDelete.id);
+	saveData();
+	closeModal('deleteLogModal');
+	logToDelete = null;
+
+	if (currentActivity) {
+		openLogActivityModal(currentActivity); // Refresh the main modal
+	}
+	renderActivities(); // Refresh the activities to update totals
 }
 
 function cancelDeleteLog(originalContent) {
@@ -395,19 +400,6 @@ function cancelDeleteLog(originalContent) {
 	if (currentActivity) {
 		openLogActivityModal(currentActivity);
 	}
-}
-
-function executeDeleteLog() {
-	if (!logToDelete) return;
-
-	data.logs = data.logs.filter(l => l.id !== logToDelete.id);
-	saveData();
-	logToDelete = null;
-
-	if (currentActivity) {
-		openLogActivityModal(currentActivity); // Refresh the modal
-	}
-	renderActivities(); // Refresh the activities to update totals
 }
 
 function editLog(log) {

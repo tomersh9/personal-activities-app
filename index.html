@@ -88,6 +88,24 @@
 			</div>
 		</div>
 
+		<!-- Delete Log Confirmation Modal -->
+		<div id="deleteLogModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header delete-header">🗑️ למחוק רישום?</div>
+				<div class="delete-log-info">
+					<div class="log-info-card">
+						<span id="deleteLogDate"></span>
+						<span id="deleteLogPrice"></span>
+					</div>
+				</div>
+				<p class="delete-warning">פעולה זו לא ניתנת לביטול</p>
+				<div class="form-buttons">
+					<button class="btn btn-danger" onclick="executeDeleteLog()">מחק רישום</button>
+					<button class="btn btn-secondary" onclick="closeModal('deleteLogModal')">ביטול</button>
+				</div>
+			</div>
+		</div>
+
 		<!-- Delete Confirmation Modal -->
 		<div id="deleteConfirmModal" class="modal">
 			<div class="modal-content">

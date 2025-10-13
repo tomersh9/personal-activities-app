@@ -573,6 +573,83 @@ body {
 	border-color: #9ca3af;
 }
 
+/* Delete Log Modal Specific Styles */
+
+#deleteLogModal .modal-content {
+	padding: 0;
+	overflow: hidden;
+}
+
+#deleteLogModal .modal-header {
+	background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+	color: white;
+	margin: 0;
+	padding: 25px 30px;
+	border-radius: 20px 20px 0 0;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+	text-align: center;
+	font-size: 1.5em;
+}
+
+#deleteLogModal .delete-log-info {
+	text-align: center;
+	margin: 30px 30px 20px 30px;
+}
+
+#deleteLogModal .delete-warning {
+	text-align: center;
+	color: #9ca3af;
+	font-size: 0.9em;
+	font-style: italic;
+	margin: 20px 30px;
+}
+
+#deleteLogModal .form-buttons {
+	margin: 20px 30px 30px 30px;
+	display: flex;
+	gap: 15px;
+	justify-content: center;
+	align-items: center;
+}
+
+.delete-log-info {
+	text-align: center;
+	margin: 20px 0;
+}
+
+.log-info-card {
+	background: #f9fafb;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 15px 20px;
+	display: inline-block;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.log-info-card span {
+	display: inline-block;
+	margin: 0 5px;
+}
+
+#deleteLogDate {
+	color: #6b7280;
+	font-size: 0.95em;
+}
+
+#deleteLogPrice {
+	font-weight: bold;
+	color: #059669;
+	font-size: 1.1em;
+}
+
+.delete-warning {
+	text-align: center;
+	color: #9ca3af;
+	font-size: 0.9em;
+	font-style: italic;
+	margin-bottom: 20px;
+}
+
 @media (max-width: 768px) {
 	.header h1 {
 		font-size: 1.8em;
