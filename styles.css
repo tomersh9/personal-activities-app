@@ -234,6 +234,7 @@ body {
 	width: 100%;
 	max-height: 90vh;
 	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .modal-header {
@@ -473,6 +474,105 @@ body {
 	font-weight: 600;
 }
 
+.delete-log-confirmation {
+	background: linear-gradient(135deg, #ffffff 0%, #fef7f7 100%);
+	border: 2px solid #fecaca;
+	border-radius: 16px;
+	padding: 30px 20px;
+	margin: 20px 0;
+	text-align: center;
+	box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+.delete-log-icon {
+	font-size: 2.5em;
+	margin-bottom: 15px;
+}
+
+.delete-log-title {
+	font-weight: bold;
+	font-size: 1.3em;
+	color: #dc2626;
+	margin-bottom: 20px;
+}
+
+.delete-log-details {
+	margin-bottom: 15px;
+}
+
+.log-details-card {
+	background: #f9fafb;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 15px 20px;
+	display: inline-block;
+	margin-bottom: 10px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.log-date {
+	color: #6b7280;
+	font-size: 0.95em;
+	margin-left: 10px;
+}
+
+.log-price {
+	font-weight: bold;
+	color: #059669;
+	font-size: 1.1em;
+}
+
+.delete-log-message {
+	color: #9ca3af;
+	font-size: 0.9em;
+	margin-bottom: 25px;
+	font-style: italic;
+}
+
+.delete-log-buttons {
+	display: flex;
+	gap: 15px;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.btn-danger {
+	background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 25px;
+	cursor: pointer;
+	font-size: 16px;
+	font-weight: 600;
+	transition: all 0.2s;
+	box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
+}
+
+.btn-danger:hover {
+	background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 12px rgba(220, 38, 38, 0.3);
+}
+
+.btn-danger:active {
+	transform: translateY(0);
+}
+
+/* Update existing secondary button for better contrast */
+.delete-log-buttons .btn-secondary {
+	background: #f3f4f6;
+	color: #374151;
+	border: 2px solid #d1d5db;
+	font-weight: 600;
+}
+
+.delete-log-buttons .btn-secondary:hover {
+	background: #e5e7eb;
+	border-color: #9ca3af;
+}
+
 @media (max-width: 768px) {
 	.header h1 {
 		font-size: 1.8em;
@@ -596,7 +696,6 @@ body {
 /* Add some visual polish to the edit log modal */
 #editLogModal .modal-content {
 	background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-	border: 1px solid #e0e0e0;
 	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
