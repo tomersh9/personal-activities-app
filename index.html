@@ -17,15 +17,14 @@
 			</div>
 
 			<div class="nav">
+				<button class="nav-btn add-btn" onclick="openCreateActivityModal()">+</button>
 				<button class="nav-btn active" onclick="showPage('home')">בית</button>
 				<button class="nav-btn" onclick="showPage('report')">היסטוריה</button>
 				<button class="nav-btn refresh-btn" onclick="renderActivities()">🔄</button>
 			</div>
 
 			<div id="homePage" class="page active">
-				<div class="activities-grid" id="activitiesGrid">
-					<div class="activity-card add-activity-card" onclick="openCreateActivityModal()">+</div>
-				</div>
+				<div class="activities-grid" id="activitiesGrid"></div>
 			</div>
 
 			<div id="reportPage" class="page">
@@ -66,6 +65,25 @@
 				<div class="form-buttons">
 					<button class="btn btn-primary" onclick="logActivity()">שמור</button>
 					<button class="btn btn-secondary" onclick="closeModal('logActivityModal')">ביטול</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Edit Log Modal -->
+		<div id="editLogModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header" id="editLogTitle"></div>
+				<div class="form-group">
+					<label>תאריך וזמן</label>
+					<input type="datetime-local" id="editLogDate" />
+				</div>
+				<div class="form-group" id="editPriceGroup" style="display: none">
+					<label>מחיר (₪)</label>
+					<input type="number" id="editLogPrice" placeholder="0.00" step="1" />
+				</div>
+				<div class="form-buttons">
+					<button class="btn btn-primary" onclick="saveLogEdit()">שמור</button>
+					<button class="btn btn-secondary" onclick="closeModal('editLogModal')">ביטול</button>
 				</div>
 			</div>
 		</div>

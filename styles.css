@@ -58,6 +58,18 @@ body {
 	color: white;
 }
 
+.nav-btn.add-btn {
+	font-size: 24px;
+	padding: 8px 16px;
+	background: white;
+	color: #667eea;
+	font-weight: bold;
+}
+
+.nav-btn.add-btn:hover {
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
 .nav-btn.refresh-btn {
 	font-size: 32px;
 	padding: 0;
@@ -426,6 +438,41 @@ body {
 	z-index: 5;
 }
 
+.history-toggle-section {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.summary-section {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	text-align: center;
+}
+
+.summary-title {
+	font-size: 1.4em;
+	font-weight: bold;
+	margin-bottom: 15px;
+}
+
+.summary-stats {
+	display: flex;
+	justify-content: center;
+	gap: 30px;
+	flex-wrap: wrap;
+}
+
+.summary-stat {
+	background: rgba(255, 255, 255, 0.2);
+	padding: 10px 20px;
+	border-radius: 20px;
+	font-size: 1.1em;
+	font-weight: 600;
+}
+
 @media (max-width: 768px) {
 	.header h1 {
 		font-size: 1.8em;
@@ -453,4 +500,120 @@ body {
 		padding: 10px 20px;
 		font-size: 14px;
 	}
+
+	.summary-stats {
+		flex-direction: column;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.summary-stat {
+		width: fit-content;
+	}
+}
+
+.form-group input[type='text'],
+.form-group input[type='number'],
+.form-group input[type='datetime-local'] {
+	width: 100%;
+	padding: 12px;
+	border: 2px solid #e0e0e0;
+	border-radius: 10px;
+	font-size: 16px;
+	transition: border 0.3s;
+	font-family: inherit;
+	background: white;
+}
+
+.form-group input:focus {
+	outline: none;
+	border-color: #667eea;
+}
+
+/* Custom datetime-local input styling */
+.form-group input[type='datetime-local'] {
+	color: #333;
+	background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+	cursor: pointer;
+	position: relative;
+}
+
+.form-group input[type='datetime-local']:hover {
+	background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+	border-color: #667eea;
+}
+
+.form-group input[type='datetime-local']:focus {
+	background: white;
+	border-color: #667eea;
+	box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Style the calendar icon (webkit browsers) */
+.form-group input[type='datetime-local']::-webkit-calendar-picker-indicator {
+	background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>')
+		no-repeat;
+	background-size: 16px 16px;
+	cursor: pointer;
+	padding: 0;
+	margin: 0;
+	width: 20px;
+	height: 20px;
+	opacity: 0.7;
+	transition: opacity 0.2s;
+}
+
+.form-group input[type='datetime-local']::-webkit-calendar-picker-indicator:hover {
+	opacity: 1;
+}
+
+/* Style for Firefox */
+.form-group input[type='datetime-local']::-moz-focus-inner {
+	border: 0;
+}
+
+/* RTL support for date input */
+.form-group input[type='datetime-local'] {
+	direction: ltr;
+	text-align: left;
+}
+
+/* Custom label styling for datetime inputs */
+.form-group label[for='editLogDate'] {
+	color: #667eea;
+	font-weight: 700;
+	margin-bottom: 12px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.form-group label[for='editLogDate']::before {
+	content: '📅';
+	font-size: 1.2em;
+}
+
+/* Add some visual polish to the edit log modal */
+#editLogModal .modal-content {
+	background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+	border: 1px solid #e0e0e0;
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+#editLogModal .modal-header {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	margin: -30px -30px 20px -30px;
+	padding: 20px 30px;
+	border-radius: 20px 20px 0 0;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Add subtle animation to the datetime input */
+.form-group input[type='datetime-local'] {
+	transition: all 0.3s ease;
+}
+
+.form-group input[type='datetime-local']:focus {
+	transform: translateY(-1px);
 }

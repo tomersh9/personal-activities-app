@@ -25,6 +25,7 @@ document.addEventListener('click', function (e) {
 });
 
 const colors = [
+	// Existing bright colors
 	'#FF6B6B', // אדום אלמוגי
 	'#FF5252', // אדום בוהק
 	'#FF4757', // אדום תותי
@@ -57,6 +58,58 @@ const colors = [
 	'#FB923C', // כתום בוהק
 	'#F97316', // כתום עז
 	'#EF4444', // אדום עגול
+
+	// New darker and richer colors
+	'#8B4513', // חום שוקולד
+	'#A0522D', // חום אוכף
+	'#D2691E', // חום כהה
+	'#CD853F', // חום פרו
+	'#DEB887', // חום בורליווד
+	'#F4A460', // חום חולי
+	'#DAA520', // חום זהוב
+	'#B8860B', // חום זהב כהה
+
+	// Dark grays and blacks
+	'#2F2F2F', // שחור פחם
+	'#36454F', // שחור פלדה
+	'#4A4A4A', // אפור כהה
+	'#5D5D5D', // אפור כהה בינוני
+	'#708090', // אפור אלית
+	'#696969', // אפור עמום
+	'#1C1C1C', // שחור כמעט
+	'#191970', // כחול לילה
+
+	// Deep jewel tones
+	'#800080', // סגול עמוק
+	'#4B0082', // אינדיגו עמוק
+	'#8B008B', // מגנטה כהה
+	'#9400D3', // סגול כהה
+	'#006400', // ירוק יער
+	'#228B22', // ירוק יער בהיר
+	'#008B8B', // ציאן כהה
+	'#B22222', // אדום לבנה
+	'#DC143C', // ארגמן
+	'#8B0000', // אדום כהה
+	'#800000', // מרון
+	'#2F4F4F', // אפור כהה אלית
+
+	// Navy and deep blues
+	'#000080', // כחול נייבי
+	'#483D8B', // כחול אלית כהה
+	'#2E4BC6', // כחול רויאל כהה
+	'#1E3A8A', // כחול עמוק
+	'#1E40AF', // כחול כהה
+	'#064E3B', // ירוק אזמרגד כהה
+
+	// Earth tones
+	'#654321', // חום אדמה
+	'#8B7355', // חום חאקי
+	'#9C661F', // חום ערמון
+	'#8FBC8F', // ירוק זית כהה
+	'#556B2F', // ירוק זית
+	'#6B8E23', // ירוק זית צהוב
+	'#2F4F2F', // ירוק יער כהה
+	'#8B7D6B', // חום חול כהה
 ];
 
 // Initialize available colors if empty
@@ -88,11 +141,11 @@ function showPage(page) {
 
 	if (page === 'home') {
 		document.getElementById('homePage').classList.add('active');
-		document.querySelector('.nav-btn:nth-child(1)').classList.add('active');
+		document.querySelector('.nav-btn:nth-child(2)').classList.add('active');
 		renderActivities();
 	} else if (page === 'report') {
 		document.getElementById('reportPage').classList.add('active');
-		document.querySelector('.nav-btn:nth-child(2)').classList.add('active');
+		document.querySelector('.nav-btn:nth-child(3)').classList.add('active');
 		renderReport();
 	}
 }
@@ -134,14 +187,7 @@ function renderActivities() {
 	const grid = document.getElementById('activitiesGrid');
 	grid.innerHTML = '';
 
-	// Add the "+" button first
-	const addButton = document.createElement('div');
-	addButton.className = 'activity-card add-activity-card';
-	addButton.onclick = openCreateActivityModal;
-	addButton.textContent = '+';
-	grid.appendChild(addButton);
-
-	// Then add all activities (newest first due to unshift)
+	// Add all activities (newest first due to unshift)
 	data.activities.forEach(activity => {
 		const logs = data.logs.filter(l => l.activityId === activity.id);
 		const lastLog = logs.length > 0 ? logs[logs.length - 1] : null;
@@ -238,6 +284,8 @@ function calculateWeeklyAverages(activityId) {
 	};
 }
 
+let logToEdit = null;
+
 function openLogActivityModal(activity) {
 	currentActivity = activity;
 	document.getElementById('logActivityTitle').textContent = `רישום ${activity.name}`;
@@ -270,24 +318,106 @@ function openLogActivityModal(activity) {
 					document.getElementById('activityPrice').value = log.price ? log.price.toFixed(0) : '';
 				}
 
-				//add delete log button to the side
+				// Create button container
+				const buttonContainer = document.createElement('div');
+				buttonContainer.style.float = 'left';
+				buttonContainer.style.display = 'flex';
+				buttonContainer.style.gap = '10px';
+
+				// Add edit log button
+				const editLogButton = document.createElement('button');
+				editLogButton.textContent = '✏️';
+				editLogButton.style.border = 'none';
+				editLogButton.style.cursor = 'pointer';
+				editLogButton.style.background = 'transparent';
+				editLogButton.style.fontSize = '14px';
+				editLogButton.onclick = e => {
+					e.stopPropagation();
+					editLog(log);
+				};
+
+				// Add delete log button
 				const deleteLogButton = document.createElement('button');
 				deleteLogButton.textContent = '❌';
-				deleteLogButton.style.float = 'left';
 				deleteLogButton.style.border = 'none';
 				deleteLogButton.style.cursor = 'pointer';
-				//position it to the left side
+				deleteLogButton.style.background = 'transparent';
+				deleteLogButton.style.fontSize = '14px';
 				deleteLogButton.onclick = e => {
 					e.stopPropagation();
 					deleteLog(log.id);
 				};
-				logItem.appendChild(deleteLogButton);
+
+				buttonContainer.appendChild(editLogButton);
+				buttonContainer.appendChild(deleteLogButton);
+				logItem.appendChild(buttonContainer);
 			});
 	} else {
 		previousLogsDiv.innerHTML = '<div class="previous-logs-title">אין רישומים קודמים</div>';
 	}
 
 	document.getElementById('logActivityModal').classList.add('active');
+}
+
+function editLog(log) {
+	logToEdit = log;
+	openEditLogModal(log);
+}
+
+function openEditLogModal(log) {
+	// Close the log activity modal first
+	closeModal('logActivityModal');
+
+	// Set the edit log modal content
+	document.getElementById('editLogTitle').textContent = `עריכת רישום - ${currentActivity.name}`;
+
+	// Set current values
+	const logDate = new Date(log.timestamp);
+	const dateString = logDate.toISOString().slice(0, 16); // Format for datetime-local input
+	document.getElementById('editLogDate').value = dateString;
+
+	const editPriceGroup = document.getElementById('editPriceGroup');
+	if (currentActivity.hasPrice) {
+		editPriceGroup.style.display = 'block';
+		document.getElementById('editLogPrice').value = log.price || '';
+	} else {
+		editPriceGroup.style.display = 'none';
+	}
+
+	document.getElementById('editLogModal').classList.add('active');
+}
+
+function saveLogEdit() {
+	if (!logToEdit) return;
+
+	const newDate = document.getElementById('editLogDate').value;
+	const newPrice = currentActivity.hasPrice ? parseFloat(document.getElementById('editLogPrice').value) || 0 : null;
+
+	if (!newDate) {
+		alert('נא לבחור תאריך וזמן');
+		return;
+	}
+
+	if (currentActivity.hasPrice && newPrice <= 0) {
+		alert('נא להזין מחיר חוקי');
+		return;
+	}
+
+	// Update the log
+	logToEdit.timestamp = new Date(newDate).toISOString();
+	if (currentActivity.hasPrice) {
+		logToEdit.price = newPrice;
+	}
+
+	saveData();
+	closeModal('editLogModal');
+	logToEdit = null;
+
+	// Refresh the views
+	renderActivities();
+	if (currentActivity) {
+		openLogActivityModal(currentActivity);
+	}
 }
 
 function deleteLog(logId) {
@@ -492,66 +622,118 @@ function formatPrice(price) {
 	return new Intl.NumberFormat('he-IL').format(Math.round(price));
 }
 
+let showingAllHistory = false;
+
 function renderReport() {
 	const historyList = document.getElementById('historyList');
 	historyList.innerHTML = '';
 
-	const totalSection = document.createElement('div');
-	historyList.appendChild(totalSection);
+	// Add toggle button
+	const toggleSection = document.createElement('div');
+	toggleSection.className = 'history-toggle-section';
+	toggleSection.innerHTML = `
+        <button class="btn ${showingAllHistory ? 'btn-secondary' : 'btn-primary'}" onclick="toggleHistoryView()">
+            ${showingAllHistory ? 'הצג חודש אחרון' : 'הצג כל ההיסטוריה'}
+        </button>
+    `;
+	historyList.appendChild(toggleSection);
 
-	let grandTotal = 0;
+	// Calculate date range
+	const now = new Date();
+	let startDate = null;
 
-	const orderedActivities = [...data.activities.filter(activity => activity.hasPrice), ...data.activities.filter(activity => !activity.hasPrice)];
+	if (!showingAllHistory) {
+		// Last month calculation
+		startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+	}
 
-	//order activities by most recent log
-	orderedActivities.sort((a, b) => {
-		const aLogs = data.logs.filter(l => l.activityId === a.id);
-		const bLogs = data.logs.filter(l => l.activityId === b.id);
+	// Filter logs by date range
+	const filteredLogs = startDate ? data.logs.filter(log => new Date(log.timestamp) >= startDate) : data.logs;
+
+	// Calculate totals
+	const totalLogsCount = filteredLogs.length;
+	const totalExpenses = filteredLogs.reduce((sum, log) => sum + (log.price || 0), 0);
+
+	// Add summary section
+	const summarySection = document.createElement('div');
+	summarySection.className = 'summary-section';
+
+	let periodText = showingAllHistory ? 'כל הזמנים' : 'חודש אחרון';
+	let summaryHTML = `<div class="summary-title">${periodText}</div>`;
+	summaryHTML += `<div class="summary-stats">`;
+	summaryHTML += `<div class="summary-stat">סה"כ רישומים: ${totalLogsCount}</div>`;
+	if (totalExpenses > 0) {
+		summaryHTML += `<div class="summary-stat">סה"כ הוצאות: ₪${formatPrice(totalExpenses)}</div>`;
+	}
+	summaryHTML += `</div>`;
+
+	summarySection.innerHTML = summaryHTML;
+	historyList.appendChild(summarySection);
+
+	// Group filtered logs by activity
+	const activitiesWithLogs = {};
+	filteredLogs.forEach(log => {
+		if (!activitiesWithLogs[log.activityId]) {
+			activitiesWithLogs[log.activityId] = [];
+		}
+		activitiesWithLogs[log.activityId].push(log);
+	});
+
+	// Get activities that have logs in the filtered period
+	const relevantActivities = data.activities.filter(activity => activitiesWithLogs[activity.id] && activitiesWithLogs[activity.id].length > 0);
+
+	// Order activities by most recent log
+	relevantActivities.sort((a, b) => {
+		const aLogs = activitiesWithLogs[a.id];
+		const bLogs = activitiesWithLogs[b.id];
 		const aLastLog = aLogs.length > 0 ? new Date(aLogs[aLogs.length - 1].timestamp) : 0;
 		const bLastLog = bLogs.length > 0 ? new Date(bLogs[bLogs.length - 1].timestamp) : 0;
 		return bLastLog - aLastLog;
 	});
 
-	orderedActivities.forEach(activity => {
-		const logs = data.logs.filter(l => l.activityId === activity.id);
-		if (logs.length === 0) return;
+	relevantActivities.forEach(activity => {
+		const logs = activitiesWithLogs[activity.id];
+		if (!logs || logs.length === 0) return;
 
 		const section = document.createElement('div');
 		section.className = 'activity-section';
 
 		const activityTotal = logs.reduce((sum, log) => sum + (log.price || 0), 0);
-		grandTotal += activityTotal;
 
 		let titleHTML = `<div class="activity-section-title">${activity.name}`;
-		if (activity.hasPrice) {
+		titleHTML += ` (${logs.length})`;
+		if (activity.hasPrice && activityTotal > 0) {
 			titleHTML += ` - סה"כ: ₪${formatPrice(activityTotal)}`;
 		}
 		titleHTML += `</div>`;
 
 		section.innerHTML = titleHTML;
 
-		//order logs by new first
+		// Order logs by newest first
 		logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(log => {
 			const item = document.createElement('div');
 			item.className = 'history-item';
 			item.innerHTML = `
-                                <span class="history-date">${formatDate(log.timestamp)}</span>
-                                 ${log.price ? `<span class="history-price">₪${formatPrice(log.price)}</span>` : ''}
-                             `;
+                <span class="history-date">${formatDate(log.timestamp)}</span>
+                ${log.price ? `<span class="history-price">₪${formatPrice(log.price)}</span>` : ''}
+            `;
 			section.appendChild(item);
 		});
 
 		historyList.appendChild(section);
 	});
 
-	if (grandTotal > 0) {
-		totalSection.className = 'total-section';
-		totalSection.textContent = `סה"כ הוצאות: ₪${formatPrice(grandTotal)}`;
+	if (totalLogsCount === 0) {
+		const noDataSection = document.createElement('div');
+		noDataSection.className = 'activity-section';
+		noDataSection.innerHTML = `<div class="activity-section-title">אין פעילויות שנרשמו ${showingAllHistory ? 'עדיין' : 'בחודש האחרון'}</div>`;
+		historyList.appendChild(noDataSection);
 	}
+}
 
-	if (data.logs.length === 0) {
-		historyList.innerHTML = '<div class="activity-section"><div class="activity-section-title">אין פעילויות שנרשמו עדיין</div></div>';
-	}
+function toggleHistoryView() {
+	showingAllHistory = !showingAllHistory;
+	renderReport();
 }
 
 // Initialize
