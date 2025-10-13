@@ -548,6 +548,8 @@ body {
 	font-weight: 600;
 	transition: all 0.2s;
 	box-shadow: 0 4px 8px rgba(220, 38, 38, 0.2);
+	white-space: nowrap;
+	min-width: 100px;
 }
 
 .btn-danger:hover {
@@ -687,8 +689,27 @@ body {
 	.summary-stat {
 		width: fit-content;
 	}
-}
 
+	/* Mobile-specific button styling */
+	.btn-danger {
+		font-size: 14px;
+		padding: 10px 16px;
+	}
+
+	.btn-secondary {
+		font-size: 14px;
+		padding: 10px 16px;
+	}
+
+	#deleteLogModal .form-buttons {
+		gap: 10px;
+	}
+
+	#deleteLogModal .form-buttons .btn {
+		width: 100%;
+		max-width: 200px;
+	}
+}
 .form-group input[type='text'],
 .form-group input[type='number'],
 .form-group input[type='datetime-local'] {
