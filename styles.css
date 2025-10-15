@@ -489,7 +489,7 @@ body {
 .summary-section {
 	background: #667eea;
 	color: white;
-	padding: 20px;
+	padding: 15px 0px;
 	margin-bottom: 20px;
 	border-radius: 15px;
 	text-align: center;
@@ -785,13 +785,11 @@ body {
 /* Custom datetime-local input styling */
 .form-group input[type='datetime-local'] {
 	color: #333;
-	background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 	cursor: pointer;
 	position: relative;
 }
 
 .form-group input[type='datetime-local']:hover {
-	background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
 	border-color: #667eea;
 }
 
@@ -847,12 +845,11 @@ body {
 
 /* Add some visual polish to the edit log modal */
 #editLogModal .modal-content {
-	background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
 	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 #editLogModal .modal-header {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	background: #667eea;
 	color: white;
 	margin: -30px -30px 20px -30px;
 	padding: 20px 30px;
