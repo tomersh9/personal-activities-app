@@ -327,7 +327,7 @@ body {
 }
 
 .activity-section-title {
-	font-size: 1.5em;
+	font-size: 1.2em;
 	font-weight: bold;
 	color: #667eea;
 	margin-bottom: 15px;
@@ -354,6 +354,48 @@ body {
 	font-weight: bold;
 	color: #4caf50;
 	font-size: 1.1em;
+}
+
+.history-filter-section {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.filter-buttons {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.filter-btn {
+	padding: 10px 20px;
+	background: white;
+	border: 2px solid #e0e0e0;
+	border-radius: 20px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 600;
+	transition: all 0.2s;
+	color: #666;
+	min-width: 80px;
+}
+
+.filter-btn:hover {
+	border-color: #667eea;
+	color: #667eea;
+	box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.filter-btn.active {
+	background: #667eea;
+	color: white;
+	border-color: #667eea;
+	box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filter-btn.active:hover {
+	box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
 .total-section {
@@ -445,7 +487,7 @@ body {
 }
 
 .summary-section {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	background: #667eea;
 	color: white;
 	padding: 20px;
 	margin-bottom: 20px;
@@ -468,10 +510,16 @@ body {
 
 .summary-stat {
 	background: rgba(255, 255, 255, 0.2);
-	padding: 10px 20px;
+	padding: 8px 16px;
 	border-radius: 20px;
-	font-size: 1.1em;
+	font-size: 1em;
 	font-weight: 600;
+}
+
+.summary-stat.total-logs {
+	background: none;
+	font-size: 0.8em;
+	font-weight: 500;
 }
 
 .delete-log-confirmation {
@@ -554,12 +602,7 @@ body {
 
 .btn-danger:hover {
 	background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-	transform: translateY(-1px);
 	box-shadow: 0 6px 12px rgba(220, 38, 38, 0.3);
-}
-
-.btn-danger:active {
-	transform: translateY(0);
 }
 
 /* Update existing secondary button for better contrast */
@@ -682,7 +725,7 @@ body {
 
 	.summary-stats {
 		flex-direction: column;
-		gap: 10px;
+		gap: 5px;
 		align-items: center;
 	}
 
@@ -701,6 +744,16 @@ body {
 		padding: 10px 16px;
 	}
 
+	.filter-buttons {
+		gap: 8px;
+	}
+
+	.filter-btn {
+		padding: 8px 16px;
+		font-size: 13px;
+		min-width: 70px;
+	}
+
 	#deleteLogModal .form-buttons {
 		gap: 10px;
 	}
@@ -710,6 +763,7 @@ body {
 		max-width: 200px;
 	}
 }
+
 .form-group input[type='text'],
 .form-group input[type='number'],
 .form-group input[type='datetime-local'] {
@@ -809,8 +863,4 @@ body {
 /* Add subtle animation to the datetime input */
 .form-group input[type='datetime-local'] {
 	transition: all 0.3s ease;
-}
-
-.form-group input[type='datetime-local']:focus {
-	transform: translateY(-1px);
 }

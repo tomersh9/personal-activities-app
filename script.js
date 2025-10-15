@@ -665,29 +665,51 @@ function formatPrice(price) {
 	return new Intl.NumberFormat('he-IL').format(Math.round(price));
 }
 
-let showingAllHistory = false;
+let reportTimeFilter = 'weekly'; // 'daily', 'weekly', 'monthly', 'all'
 
 function renderReport() {
 	const historyList = document.getElementById('historyList');
 	historyList.innerHTML = '';
 
-	// Add toggle button
-	const toggleSection = document.createElement('div');
-	toggleSection.className = 'history-toggle-section';
-	toggleSection.innerHTML = `
-        <button class="btn ${showingAllHistory ? 'btn-secondary' : 'btn-primary'}" onclick="toggleHistoryView()">
-            ${showingAllHistory ? 'הצג חודש אחרון' : 'הצג כל ההיסטוריה'}
-        </button>
+	// Add filter buttons
+	const filterSection = document.createElement('div');
+	filterSection.className = 'history-filter-section';
+	filterSection.innerHTML = `
+        <div class="filter-buttons">
+            <button class="filter-btn ${reportTimeFilter === 'daily' ? 'active' : ''}" onclick="setReportFilter('daily')">יומי</button>
+            <button class="filter-btn ${reportTimeFilter === 'weekly' ? 'active' : ''}" onclick="setReportFilter('weekly')">שבועי</button>
+            <button class="filter-btn ${reportTimeFilter === 'monthly' ? 'active' : ''}" onclick="setReportFilter('monthly')">חודשי</button>
+            <button class="filter-btn ${reportTimeFilter === 'all' ? 'active' : ''}" onclick="setReportFilter('all')">כל הזמנים</button>
+        </div>
     `;
-	historyList.appendChild(toggleSection);
+	historyList.appendChild(filterSection);
 
-	// Calculate date range
+	// Calculate date range based on filter
 	const now = new Date();
 	let startDate = null;
+	let periodText = '';
 
-	if (!showingAllHistory) {
-		// Last month calculation
-		startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+	switch (reportTimeFilter) {
+		case 'daily':
+			startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			periodText = 'היום';
+			break;
+		case 'weekly':
+			const startOfWeek = new Date(now);
+			startOfWeek.setDate(now.getDate() - now.getDay());
+			startOfWeek.setHours(0, 0, 0, 0);
+			startDate = startOfWeek;
+			periodText = 'השבוע';
+			break;
+		case 'monthly':
+			startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+			periodText = 'החודש';
+			break;
+		case 'all':
+		default:
+			startDate = null;
+			periodText = 'כל הזמנים';
+			break;
 	}
 
 	// Filter logs by date range
@@ -701,13 +723,12 @@ function renderReport() {
 	const summarySection = document.createElement('div');
 	summarySection.className = 'summary-section';
 
-	let periodText = showingAllHistory ? 'כל הזמנים' : 'חודש אחרון';
 	let summaryHTML = `<div class="summary-title">${periodText}</div>`;
 	summaryHTML += `<div class="summary-stats">`;
-	summaryHTML += `<div class="summary-stat">סה"כ רישומים: ${totalLogsCount}</div>`;
 	if (totalExpenses > 0) {
 		summaryHTML += `<div class="summary-stat">סה"כ הוצאות: ₪${formatPrice(totalExpenses)}</div>`;
 	}
+	summaryHTML += `<div class="summary-stat total-logs">סה"כ רישומים: ${totalLogsCount}</div>`;
 	summaryHTML += `</div>`;
 
 	summarySection.innerHTML = summaryHTML;
@@ -769,13 +790,29 @@ function renderReport() {
 	if (totalLogsCount === 0) {
 		const noDataSection = document.createElement('div');
 		noDataSection.className = 'activity-section';
-		noDataSection.innerHTML = `<div class="activity-section-title">אין פעילויות שנרשמו ${showingAllHistory ? 'עדיין' : 'בחודש האחרון'}</div>`;
+		let noDataText = '';
+		switch (reportTimeFilter) {
+			case 'daily':
+				noDataText = 'אין פעילויות שנרשמו היום';
+				break;
+			case 'weekly':
+				noDataText = 'אין פעילויות שנרשמו השבוע';
+				break;
+			case 'monthly':
+				noDataText = 'אין פעילויות שנרשמו החודש';
+				break;
+			case 'all':
+			default:
+				noDataText = 'אין פעילויות שנרשמו עדיין';
+				break;
+		}
+		noDataSection.innerHTML = `<div class="activity-section-title">${noDataText}</div>`;
 		historyList.appendChild(noDataSection);
 	}
 }
 
-function toggleHistoryView() {
-	showingAllHistory = !showingAllHistory;
+function setReportFilter(filter) {
+	reportTimeFilter = filter;
 	renderReport();
 }
 
