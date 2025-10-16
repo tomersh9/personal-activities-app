@@ -183,12 +183,12 @@ function createActivity() {
 	renderActivities();
 }
 
-function renderActivities() {
+function renderActivities(animate = false) {
 	const grid = document.getElementById('activitiesGrid');
 	grid.innerHTML = '';
 
 	// Add all activities (newest first due to unshift)
-	data.activities.forEach(activity => {
+	data.activities.forEach((activity, index) => {
 		const logs = data.logs.filter(l => l.activityId === activity.id);
 		const lastLog = logs.length > 0 ? logs[logs.length - 1] : null;
 		const totalSpent = logs.reduce((sum, log) => sum + (log.price || 0), 0);
@@ -201,6 +201,15 @@ function renderActivities() {
 		card.style.background = activity.color;
 		card.draggable = true;
 		card.dataset.activityId = activity.id;
+
+		if (animate) {
+			card.style.animationDelay = `${index * 0.025}s`;
+		} else {
+			// Skip animation for regular renders
+			card.style.animation = 'none';
+			card.style.opacity = '1';
+			card.style.transform = 'none';
+		}
 
 		let infoHTML = '';
 		if (activity.hasPrice) {
@@ -255,6 +264,13 @@ function renderActivities() {
 
 		grid.appendChild(card);
 	});
+}
+
+// Add refresh animation function
+function refreshActivities() {
+	setTimeout(() => {
+		renderActivities(true);
+	}, 10);
 }
 
 function calculateWeeklyAverages(activityId) {
@@ -876,4 +892,4 @@ function setReportFilter(filter) {
 }
 
 // Initialize
-renderActivities();
+renderActivities(true);
