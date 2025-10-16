@@ -305,8 +305,8 @@ function openLogActivityModal(activity) {
 	const previousLogsDiv = document.getElementById('previousLogs');
 
 	if (logs.length > 0) {
-		previousLogsDiv.innerHTML = '<div class="previous-logs-title">רישומים קודמים:</div>';
-		logs.slice(-5)
+		previousLogsDiv.innerHTML = `<div class="previous-logs-title">רישומים קודמים (${logs.length}):</div>`;
+		logs.slice(-10)
 			.reverse()
 			.forEach((log, i) => {
 				const logItem = document.createElement('div');
@@ -644,17 +644,76 @@ function formatDate(timestamp) {
 	const diffDays = Math.floor(diffMs / 86400000);
 	const diffWeeks = Math.floor(diffDays / 7);
 	const diffMonths = Math.floor(diffDays / 30);
+	const diffYears = Math.floor(diffDays / 365);
 
 	if (diffMins < 1) return 'כרגע';
 	if (diffMins < 60) return `לפני ${diffMins} דקות`;
 	if (diffHours < 24) return `לפני ${diffHours} שעות`;
 	if (diffDays === 1) return 'לפני יום';
 	if (diffDays < 7) return `לפני ${diffDays} ימים`;
-	if (diffWeeks === 1) return 'לפני שבוע';
-	if (diffDays < 30) return `לפני ${diffWeeks} שבועות`;
-	if (diffMonths === 1) return 'לפני חודש';
-	if (diffMonths < 12) return `לפני ${diffMonths} חודשים`;
 
+	// More detailed formatting for longer periods
+	if (diffDays < 14) {
+		// 1-2 weeks
+		const remainingDays = diffDays % 7;
+		if (diffWeeks === 1) {
+			if (remainingDays === 0) return 'לפני שבוע';
+			if (remainingDays === 1) return 'לפני שבוע ויום';
+			return `לפני שבוע ו-${remainingDays} ימים`;
+		}
+	}
+
+	if (diffDays < 30) {
+		// 2-4 weeks
+		const remainingDays = diffDays % 7;
+		if (remainingDays === 0) return `לפני ${diffWeeks} שבועות`;
+		if (remainingDays === 1) return `לפני ${diffWeeks} שבועות ויום`;
+		return `לפני ${diffWeeks} שבועות ו-${remainingDays} ימים`;
+	}
+
+	if (diffDays < 60) {
+		// 1-2 months
+		const remainingDays = diffDays % 30;
+		const remainingWeeks = Math.floor(remainingDays / 7);
+		const finalDays = remainingDays % 7;
+
+		let result = diffMonths === 1 ? 'לפני חודש' : `לפני ${diffMonths} חודשים`;
+
+		if (remainingWeeks > 0) {
+			result += remainingWeeks === 1 ? ' ושבוע' : ` ו-${remainingWeeks} שבועות`;
+		}
+		if (finalDays > 0) {
+			if (remainingWeeks > 0) {
+				result += finalDays === 1 ? ' ויום' : ` ו-${finalDays} ימים`;
+			} else {
+				result += finalDays === 1 ? ' ויום' : ` ו-${finalDays} ימים`;
+			}
+		}
+
+		return result;
+	}
+
+	if (diffDays < 365) {
+		// 2+ months but less than a year
+		const remainingDays = diffDays % 30;
+		if (remainingDays === 0) return `לפני ${diffMonths} חודשים`;
+
+		const remainingWeeks = Math.floor(remainingDays / 7);
+		const finalDays = remainingDays % 7;
+
+		let result = `לפני ${diffMonths} חודשים`;
+
+		if (remainingWeeks > 0) {
+			result += remainingWeeks === 1 ? ' ושבוע' : ` ו-${remainingWeeks} שבועות`;
+		}
+		if (finalDays > 0) {
+			result += finalDays === 1 ? ' ויום' : ` ו-${finalDays} ימים`;
+		}
+
+		return result;
+	}
+
+	// For very old dates (1+ years), show the actual date
 	const day = String(date.getDate()).padStart(2, '0');
 	const month = String(date.getMonth() + 1).padStart(2, '0');
 	const year = String(date.getFullYear()).slice(-2);
