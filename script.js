@@ -135,6 +135,76 @@ function getRandomColor() {
 	return selectedColor;
 }
 
+let touchStartX = 0;
+let touchEndX = 0;
+let isSwipeEnabled = true;
+
+// Add touch event listeners for swipe navigation
+function initializeTouchNavigation() {
+	const container = document.querySelector('.container');
+
+	container.addEventListener('touchstart', handleTouchStart, { passive: true });
+	container.addEventListener('touchend', handleTouchEnd, { passive: true });
+}
+
+function handleTouchStart(e) {
+	if (!isSwipeEnabled) return;
+
+	// Don't interfere with modal interactions
+	if (e.target.closest('.modal.active')) {
+		return;
+	}
+
+	touchStartX = e.changedTouches[0].screenX;
+}
+
+function handleTouchEnd(e) {
+	if (!isSwipeEnabled) return;
+
+	// Don't interfere with modal interactions
+	if (e.target.closest('.modal.active')) {
+		return;
+	}
+
+	touchEndX = e.changedTouches[0].screenX;
+	handleSwipe();
+}
+
+function handleSwipe() {
+	const swipeThreshold = 50; // Minimum distance for a swipe
+	const swipeDistance = touchEndX - touchStartX;
+
+	// Get current page
+	const currentPage = document.querySelector('.page.active').id;
+
+	// Right swipe (swipe to left page)
+	if (swipeDistance > swipeThreshold) {
+		if (currentPage === 'reportPage') {
+			showPage('home');
+		}
+	}
+	// Left swipe (swipe to right page)
+	else if (swipeDistance < -swipeThreshold) {
+		if (currentPage === 'homePage') {
+			showPage('report');
+		}
+	}
+}
+
+// Disable swipe when modals are open
+function openModal(modalId) {
+	isSwipeEnabled = false;
+	document.getElementById(modalId).classList.add('active');
+}
+
+function closeModal(modalId) {
+	document.getElementById(modalId).classList.remove('active');
+	// Re-enable swipe after a small delay to prevent accidental swipes
+	setTimeout(() => {
+		isSwipeEnabled = true;
+	}, 100);
+}
+
 function showPage(page) {
 	document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 	document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -151,13 +221,14 @@ function showPage(page) {
 }
 
 function openCreateActivityModal() {
-	document.getElementById('createActivityModal').classList.add('active');
+	openModal('createActivityModal');
 	document.getElementById('newActivityName').value = '';
 	document.getElementById('newActivityHasPrice').checked = false;
 }
 
-function closeModal(modalId) {
-	document.getElementById(modalId).classList.remove('active');
+function deleteActivity(activityId) {
+	activityToDelete = activityId;
+	openModal('deleteConfirmModal');
 }
 
 function createActivity() {
@@ -322,32 +393,45 @@ function openLogActivityModal(activity) {
 
 	if (logs.length > 0) {
 		previousLogsDiv.innerHTML = `<div class="previous-logs-title">רישומים קודמים (${logs.length}):</div>`;
-		logs.slice(-10)
+		logs.slice(-5)
 			.reverse()
 			.forEach((log, i) => {
 				const logItem = document.createElement('div');
 				logItem.className = 'log-item';
-				logItem.textContent = `${formatDate(log.timestamp)}${log.price ? ` - ₪${formatPrice(log.price)}` : ''}`;
-				previousLogsDiv.appendChild(logItem);
 
-				//set the last log's price in the text field
-				if (log.price > 0 && i === 0) {
-					document.getElementById('activityPrice').value = log.price ? log.price.toFixed(0) : '';
-				}
+				// Format the date and time
+				const logDate = new Date(log.timestamp);
+				const timeStr = logDate.toLocaleTimeString('he-IL', {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false,
+				});
+				const dateStr = logDate.toLocaleDateString('he-IL', {
+					day: '2-digit',
+					month: '2-digit',
+					year: '2-digit',
+				});
+				const formattedDateTime = `${timeStr}, ${dateStr}`;
 
-				// Create button container
+				// Create content container and button container
+				const contentContainer = document.createElement('div');
+				contentContainer.className = 'log-content';
+
 				const buttonContainer = document.createElement('div');
-				buttonContainer.style.float = 'left';
-				buttonContainer.style.display = 'flex';
-				buttonContainer.style.gap = '10px';
+				buttonContainer.className = 'log-buttons';
+
+				// Main log content
+				contentContainer.innerHTML = `
+                    <div class="log-main-content">
+                        ${formatDate(log.timestamp)}${log.price ? ` - ₪${formatPrice(log.price)}` : ''}
+                    </div>
+                    <div class="log-datetime">${formattedDateTime}</div>
+                `;
 
 				// Add edit log button
 				const editLogButton = document.createElement('button');
 				editLogButton.textContent = '✏️';
-				editLogButton.style.border = 'none';
-				editLogButton.style.cursor = 'pointer';
-				editLogButton.style.background = 'transparent';
-				editLogButton.style.fontSize = '14px';
+				editLogButton.className = 'log-action-btn';
 				editLogButton.onclick = e => {
 					e.stopPropagation();
 					editLog(log);
@@ -356,10 +440,7 @@ function openLogActivityModal(activity) {
 				// Add delete log button
 				const deleteLogButton = document.createElement('button');
 				deleteLogButton.textContent = '❌';
-				deleteLogButton.style.border = 'none';
-				deleteLogButton.style.cursor = 'pointer';
-				deleteLogButton.style.background = 'transparent';
-				deleteLogButton.style.fontSize = '14px';
+				deleteLogButton.className = 'log-action-btn';
 				deleteLogButton.onclick = e => {
 					e.stopPropagation();
 					confirmDeleteLog(log);
@@ -367,13 +448,21 @@ function openLogActivityModal(activity) {
 
 				buttonContainer.appendChild(editLogButton);
 				buttonContainer.appendChild(deleteLogButton);
+
+				logItem.appendChild(contentContainer);
 				logItem.appendChild(buttonContainer);
+				previousLogsDiv.appendChild(logItem);
+
+				//set the last log's price in the text field
+				if (log.price > 0 && i === 0) {
+					document.getElementById('activityPrice').value = log.price ? log.price.toFixed(0) : '';
+				}
 			});
 	} else {
 		previousLogsDiv.innerHTML = '<div class="previous-logs-title">אין רישומים קודמים</div>';
 	}
 
-	document.getElementById('logActivityModal').classList.add('active');
+	openModal('logActivityModal');
 }
 
 function confirmDeleteLog(log) {
@@ -390,7 +479,7 @@ function confirmDeleteLog(log) {
 	}
 
 	// Show the delete log modal
-	document.getElementById('deleteLogModal').classList.add('active');
+	openModal('deleteLogModal');
 }
 
 function executeDeleteLog() {
@@ -443,7 +532,7 @@ function openEditLogModal(log) {
 		editPriceGroup.style.display = 'none';
 	}
 
-	document.getElementById('editLogModal').classList.add('active');
+	openModal('editLogModal');
 }
 
 function saveLogEdit() {
@@ -513,11 +602,6 @@ function logActivity() {
 	renderActivities();
 }
 
-function deleteActivity(activityId) {
-	activityToDelete = activityId;
-	document.getElementById('deleteConfirmModal').classList.add('active');
-}
-
 function editActivity(activityId) {
 	const activity = data.activities.find(a => a.id === activityId);
 	if (!activity) return;
@@ -542,7 +626,7 @@ function editActivity(activityId) {
 		colorPicker.appendChild(colorOption);
 	});
 
-	document.getElementById('editActivityModal').classList.add('active');
+	openModal('editActivityModal');
 }
 
 function selectColor(color) {
@@ -890,6 +974,9 @@ function setReportFilter(filter) {
 	reportTimeFilter = filter;
 	renderReport();
 }
+
+// Initialize touch navigation when the page loads
+document.addEventListener('DOMContentLoaded', initializeTouchNavigation);
 
 // Initialize
 renderActivities(true);
