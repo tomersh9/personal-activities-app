@@ -137,6 +137,8 @@ function getRandomColor() {
 
 let touchStartX = 0;
 let touchEndX = 0;
+let touchStartY = 0;
+let touchEndY = 0;
 let isSwipeEnabled = true;
 
 // Add touch event listeners for swipe navigation
@@ -156,6 +158,7 @@ function handleTouchStart(e) {
 	}
 
 	touchStartX = e.changedTouches[0].screenX;
+	touchStartY = e.changedTouches[0].screenY;
 }
 
 function handleTouchEnd(e) {
@@ -167,24 +170,28 @@ function handleTouchEnd(e) {
 	}
 
 	touchEndX = e.changedTouches[0].screenX;
+	touchEndY = e.changedTouches[0].screenY;
 	handleSwipe();
 }
 
 function handleSwipe() {
 	const swipeThreshold = 50; // Minimum distance for a swipe
-	const swipeDistance = touchEndX - touchStartX;
+	const swipeDistanceX = touchEndX - touchStartX;
+	const swipeDistanceY = touchEndY - touchStartY;
+
+	if (swipeDistanceY > swipeThreshold || swipeDistanceY < -swipeThreshold) return;
 
 	// Get current page
 	const currentPage = document.querySelector('.page.active').id;
 
 	// Right swipe (swipe to left page)
-	if (swipeDistance > swipeThreshold) {
+	if (swipeDistanceX > swipeThreshold) {
 		if (currentPage === 'homePage') {
 			showPage('report');
 		}
 	}
 	// Left swipe (swipe to right page)
-	else if (swipeDistance < -swipeThreshold) {
+	else if (swipeDistanceX < -swipeThreshold) {
 		if (currentPage === 'reportPage') {
 			showPage('home');
 		}
