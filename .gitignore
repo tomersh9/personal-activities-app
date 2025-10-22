@@ -1,0 +1,60 @@
+# Basic .gitignore for a general development project
+
+# Node/npm
+node_modules/
+dist/
+build/
+out/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs / editors
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln
+*.ncb
+*.logk
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Packages / dependencies
+vendor/
+packages/
+
+# Build / binaries
+target/
+*.class
+*.jar
+*.war
+*.exe
+*.dll
+
+# Misc
+*.swp
+*.tmp
+*.bak
