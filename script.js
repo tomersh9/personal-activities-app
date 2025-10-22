@@ -179,14 +179,14 @@ function handleSwipe() {
 
 	// Right swipe (swipe to left page)
 	if (swipeDistance > swipeThreshold) {
-		if (currentPage === 'reportPage') {
-			showPage('home');
+		if (currentPage === 'homePage') {
+			showPage('report');
 		}
 	}
 	// Left swipe (swipe to right page)
 	else if (swipeDistance < -swipeThreshold) {
-		if (currentPage === 'homePage') {
-			showPage('report');
+		if (currentPage === 'reportPage') {
+			showPage('home');
 		}
 	}
 }
@@ -661,6 +661,7 @@ function saveActivityEdit() {
 
 // Drag and drop functions
 function handleDragStart(e) {
+	isSwipeEnabled = false;
 	draggedElement = e.currentTarget;
 	draggedActivityId = parseInt(e.currentTarget.dataset.activityId);
 	e.currentTarget.classList.add('dragging');
@@ -668,6 +669,7 @@ function handleDragStart(e) {
 }
 
 function handleDragEnd(e) {
+	isSwipeEnabled = true;
 	e.currentTarget.classList.remove('dragging');
 	document.querySelectorAll('.activity-card').forEach(card => {
 		card.classList.remove('drag-over');

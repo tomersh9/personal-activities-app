@@ -795,7 +795,12 @@ body {
 
 	/* Mobile-specific button styling */
 	.btn-danger {
-		font-size: 14px;
+		font-size: 16px;
+		padding: 10px 16px;
+	}
+
+	.btn-primary {
+		font-size: 16px;
 		padding: 10px 16px;
 	}
 
